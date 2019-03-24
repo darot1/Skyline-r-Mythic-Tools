@@ -11,7 +11,7 @@ local ReskinCheck = function(f)
 	f:SetNormalTexture("")
 	f:SetPushedTexture("")
 	f:SetHighlightTexture(G.media.blank)
-	
+
 	local hl = f:GetHighlightTexture()
 	hl:SetPoint("TOPLEFT", 5, -5)
 	hl:SetPoint("BOTTOMRIGHT", -5, 5)
@@ -39,24 +39,24 @@ local createcheckbutton = function(parent, x, y, name, t1, t2, value)
 	if t2 then
 		bu = CreateFrame("CheckButton", addon_name..t1..t2..value.."Button", parent, "InterfaceOptionsCheckButtonTemplate")
 	else
-		bu = CreateFrame("CheckButton", addon_name..t1..value.."Button", parent, "InterfaceOptionsCheckButtonTemplate")	
+		bu = CreateFrame("CheckButton", addon_name..t1..value.."Button", parent, "InterfaceOptionsCheckButtonTemplate")
 	end
 	ReskinCheck(bu)
 	bu:SetPoint("TOPLEFT", x, y)
 	bu:SetHitRectInsets(0, -50, 0, 0)
-	
+
 	_G[bu:GetName() .. "Text"]:SetText(name)
-	
+
 	bu:SetScript("OnDisable", function(self)
 		local tex = select(7, bu:GetRegions())
 		tex:SetVertexColor(.8, .8, .8, .5)
 	end)
-	
+
 	bu:SetScript("OnEnable", function(self)
 		local tex = select(7, bu:GetRegions())
 		tex:SetVertexColor(.5, .5, .5, .3)
 	end)
-	
+
 	if t2 then
 		bu:SetScript("OnShow", function(self) self:SetChecked(SMT_CDB[t1][t2][value]) end)
 		bu:SetScript("OnClick", function(self)
@@ -68,7 +68,7 @@ local createcheckbutton = function(parent, x, y, name, t1, t2, value)
 			if bu.apply then
 				bu:apply()
 			end
-		end)		
+		end)
 	else
 		bu:SetScript("OnShow", function(self) self:SetChecked(SMT_CDB[t1][value]) end)
 		bu:SetScript("OnClick", function(self)
@@ -80,21 +80,22 @@ local createcheckbutton = function(parent, x, y, name, t1, t2, value)
 			if bu.apply then
 				bu:apply()
 			end
-		end)	
+		end)
 	end
-	
+
 	return bu
 end
+T.createcheckbutton = createcheckbutton
 
 local function TestSlider_OnValueChanged(self, value)
-   if not self._onsetting then   -- is single threaded 
+   if not self._onsetting then   -- is single threaded
      self._onsetting = true
      self:SetValue(self:GetValue())
      value = self:GetValue()     -- cant use original 'value' parameter
      self._onsetting = false
    else return end               -- ignore recursion for actual event handler
  end
- 
+
 local ReskinSlider = function(f)
 	f:SetBackdrop(nil)
 	f.SetBackdrop = function() end
@@ -120,9 +121,9 @@ local createslider = function(parent, x, y, name, t1, t2, value, min, max, step)
 	slider:SetPoint("TOPLEFT", x, y)
 	slider:SetWidth(120)
 	ReskinSlider(slider)
-	
+
 	BlizzardOptionsPanel_Slider_Enable(slider)
-	
+
 	slider:SetMinMaxValues(min, max)
 	_G[slider:GetName()..'Low']:SetText(min)
 	_G[slider:GetName()..'Low']:ClearAllPoints()
@@ -130,13 +131,13 @@ local createslider = function(parent, x, y, name, t1, t2, value, min, max, step)
 	_G[slider:GetName()..'High']:SetText(max)
 	_G[slider:GetName()..'High']:ClearAllPoints()
 	_G[slider:GetName()..'High']:SetPoint("LEFT", slider, "RIGHT", 5, 0)
-	
+
 	_G[slider:GetName()..'Text']:ClearAllPoints()
 	_G[slider:GetName()..'Text']:SetPoint("BOTTOM", slider, "TOP", 0, 3)
 	_G[slider:GetName()..'Text']:SetFontObject(GameFontHighlight)
 
 	slider:SetValueStep(step)
-	
+
 
 	slider:SetScript("OnShow", function(self)
 		if t2 then
@@ -147,7 +148,7 @@ local createslider = function(parent, x, y, name, t1, t2, value, min, max, step)
 			_G[slider:GetName()..'Text']:SetText(name.." "..SMT_CDB[t1][value])
 		end
 	end)
-	
+
 	slider:SetScript("OnValueChanged", function(self, getvalue)
 		if t2 then
 			SMT_CDB[t1][t2][value] = getvalue
@@ -165,8 +166,8 @@ local createslider = function(parent, x, y, name, t1, t2, value, min, max, step)
 			end
 		end
 	end)
-	
-	return slider	
+
+	return slider
 end
 
 local ReskinRadio = function(f)
@@ -187,13 +188,13 @@ local ReskinRadio = function(f)
 	bd:SetFrameLevel(f:GetFrameLevel()-1)
 	T.createbdframe(bd)
 	f.bd = bd
-	
+
 	local tex = f:CreateTexture(nil, "BORDER")
 	tex:SetTexture(G.media.gradient)
 	tex:SetVertexColor(.5,.5,.5,.5)
 	tex:SetPoint("TOPLEFT", 3, -3)
 	tex:SetPoint("BOTTOMRIGHT", -3, 3)
-	
+
 	f:HookScript("OnEnter", function() f.bd:SetBackdropBorderColor(0, 1, 0) end)
 	f:HookScript("OnLeave", function() f.bd:SetBackdropBorderColor(0, 0, 0) end)
 end
@@ -207,29 +208,29 @@ local createradiobuttongroup = function(parent, x, y, name, t1, t2, value, group
 	end
 	frame:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
 	frame:SetSize(150, 30)
-	
+
 	frame.text = T.createtext(frame, "OVERLAY", 12, "NONE", "LEFT")
 	frame.text:SetPoint("TOPLEFT", frame, "TOPLEFT")
 	frame.text:SetText(name)
-	
+
 	for i = 1, #group do
-	
+
 		local k = group[i][1]
 		local v = group[i][2]
-		
+
 		frame[k] = CreateFrame("CheckButton", addon_name..t1..value..k.."RadioButtonGroup", frame, "UIRadioButtonTemplate")
 		ReskinRadio(frame[k])
 		_G[frame[k]:GetName() .. "Text"]:SetText(v)
-		
+
 		if t2 then
 			frame[k]:SetScript("OnShow", function(self)
 				self:SetChecked(SMT_CDB[t1][t2][value] == k)
 			end)
-			
+
 			frame[k]:SetScript("OnClick", function(self)
-			
+
 				if self:GetChecked() then
-					
+
 					SMT_CDB[t1][t2][value] = k
 					if frame.apply then
 						frame:apply()
@@ -242,7 +243,7 @@ local createradiobuttongroup = function(parent, x, y, name, t1, t2, value, group
 			frame[k]:SetScript("OnShow", function(self)
 				self:SetChecked(SMT_CDB[t1][value] == k)
 			end)
-			
+
 			frame[k]:SetScript("OnClick", function(self)
 				if self:GetChecked() then
 					SMT_CDB[t1][value] = k
@@ -255,11 +256,11 @@ local createradiobuttongroup = function(parent, x, y, name, t1, t2, value, group
 			end)
 		end
 	end
-	
+
 	for i = 1, #group do
-	
+
 		local k = group[i][1]
-		
+
 		frame[k]:HookScript("OnClick", function(self)
 			if (t2 and SMT_CDB[t1][t2][value] == k) or (not t2 and SMT_CDB[t1][value] == k) then
 				for index = 1, #group do
@@ -271,7 +272,7 @@ local createradiobuttongroup = function(parent, x, y, name, t1, t2, value, group
 			end
 		end)
 	end
-	
+
 	local buttons = {frame:GetChildren()}
 	for i = 1, #buttons do
 		if i == 1 then
@@ -280,7 +281,7 @@ local createradiobuttongroup = function(parent, x, y, name, t1, t2, value, group
 			buttons[i]:SetPoint("LEFT", _G[buttons[i-1]:GetName() .. "Text"], "RIGHT", 5, 0)
 		end
 	end
-	
+
 	return frame
 end
 
@@ -288,9 +289,9 @@ T.CreateTitle = function(options, text, y, pos)
 	if y then
 		local title = T.createtext(options, "OVERLAY", 15, "OUTLINE", "CENTER")
 		title:SetText(text)
-		
+
 		local line = options:CreateTexture(nil, "ARTWORK")
-		
+
 		title:SetPoint("TOPLEFT", options, "TOPLEFT", 20, y)
 		line:SetSize(options:GetWidth()-50, 1)
 		line:SetPoint("TOPLEFT", options, "TOPLEFT", 20, y-20)
@@ -300,15 +301,15 @@ end
 
 local ReskinScroll = function(f)
 	local frame = f:GetName()
-    
+
 	local bu = (f.ThumbTexture or f.thumbTexture) or _G[frame.."ThumbTexture"]
 	bu:SetAlpha(0)
 	bu:SetWidth(17)
 
 	T.createbdframe(bu)
-	
+
 	local up, down = f:GetChildren()
-	
+
 	up:SetWidth(17)
 	T.createbdframe(up)
 	up:SetNormalTexture("")
@@ -318,23 +319,23 @@ local ReskinScroll = function(f)
 	local dis1 = up:GetDisabledTexture()
 	dis1:SetVertexColor(0, 0, 0, .4)
 	dis1:SetDrawLayer("OVERLAY")
-	
+
 	local uptex = up:CreateTexture(nil, "ARTWORK")
 	uptex:SetTexture(G.media.arrowUp)
 	uptex:SetSize(8, 8)
 	uptex:SetPoint("CENTER")
 	uptex:SetVertexColor(1, 1, 1)
 	up.bgTex = uptex
-	
-	up:HookScript("OnEnter", function(f) 
+
+	up:HookScript("OnEnter", function(f)
 		if f:IsEnabled() then
 			f.bgTex:SetVertexColor(1, 1, 0)
 		end
 	end)
-	up:HookScript("OnLeave", function(f) 
+	up:HookScript("OnLeave", function(f)
 		f.bgTex:SetVertexColor(1, 1, 1)
 	end)
-	
+
 	down:SetWidth(17)
 	T.createbdframe(down)
 	down:SetNormalTexture("")
@@ -344,7 +345,7 @@ local ReskinScroll = function(f)
 	local dis2 = down:GetDisabledTexture()
 	dis2:SetVertexColor(0, 0, 0, .4)
 	dis2:SetDrawLayer("OVERLAY")
-	
+
 	local downtex = down:CreateTexture(nil, "ARTWORK")
 	downtex:SetTexture(G.media.arrowDown)
 	downtex:SetSize(8, 8)
@@ -352,15 +353,15 @@ local ReskinScroll = function(f)
 	downtex:SetVertexColor(1, 1, 1)
 	down.bgTex = downtex
 
-	down:HookScript("OnEnter", function(f) 
+	down:HookScript("OnEnter", function(f)
 		if f:IsEnabled() then
 			f.bgTex:SetVertexColor(1, 1, 0)
 		end
 	end)
-	down:HookScript("OnLeave", function(f) 
+	down:HookScript("OnLeave", function(f)
 		f.bgTex:SetVertexColor(1, 1, 1)
 	end)
-	
+
 end
 
 T.CreateOptions = function(text, parent, scroll)
@@ -368,7 +369,7 @@ T.CreateOptions = function(text, parent, scroll)
 	options:SetPoint("TOPLEFT", parent, "TOPLEFT", 10, -15)
 	options:SetPoint("BOTTOMRIGHT", parent, "BOTTOMRIGHT", -10, 10)
 	options:Hide()
-	
+
 	local tab = parent["tab"..parent.tabindex]
 	tab.n = parent.tabindex
 	tab:SetFrameLevel(parent:GetFrameLevel()+2)
@@ -378,20 +379,20 @@ T.CreateOptions = function(text, parent, scroll)
 	tab.name = T.createtext(tab, "OVERLAY", 12, "OUTLINE", "LEFT")
 	tab.name:SetText(text)
 	tab.name:SetPoint("LEFT")
-	
+
 	tab:SetSize(130, 25)
 	tab:SetPoint("TOPLEFT", parent, "TOPRIGHT", 5, -30*tab.n)
-	
+
 	if tab.n == 1 then
 		tab.sd:SetBackdropBorderColor(1, 1, 0)
 		options:Show()
 	end
-	
+
 	tab:HookScript("OnMouseDown", function(self)
 		options:Show()
 		tab.sd:SetBackdropBorderColor(1, 1, 0)
 	end)
-	
+
 	for i = 1, parent.tabnum do
 		if i ~= tab.n then
 			parent["tab"..i]:HookScript("OnMouseDown", function(self)
@@ -400,9 +401,9 @@ T.CreateOptions = function(text, parent, scroll)
 			end)
 		end
 	end
-	
+
 	parent.tabindex = parent.tabindex +1
-	
+
 	if scroll then
 		options.sf = CreateFrame("ScrollFrame", G.addon_name..parent.tabindex.."ScrollFrame", options, "UIPanelScrollFrameTemplate")
 		options.sf:SetPoint("TOPLEFT", options, "TOPLEFT", 10, -20)
@@ -414,20 +415,20 @@ T.CreateOptions = function(text, parent, scroll)
 		options.sfa:SetWidth(options.sf:GetWidth()-20)
 		options.sfa:SetHeight(options.sf:GetHeight())
 		options.sfa:SetFrameLevel(options.sf:GetFrameLevel()+1)
-		
+
 		options.sf:SetScrollChild(options.sfa)
 		options.sf.mobs = {}
-		
+
 		ReskinScroll(_G[G.addon_name..parent.tabindex.."ScrollFrameScrollBar"])
 	end
-	
+
 	return options
 end
 
 T.Create_AlertIcon_Options = function(parent, v)
 	local _, spell_type, _, spell_id = strsplit("_", v)
 	local str
-	
+
 	if spell_type == "com" then
 		str	= string.format(L["点我时显示图标提示"], T.GetIconLink(spell_id))
 	elseif spell_type == "aura" then
@@ -439,27 +440,27 @@ T.Create_AlertIcon_Options = function(parent, v)
 	else
 		str	= string.format(L["显示图标提示"], T.GetIconLink(spell_id))
 	end
-	
+
 	local bu = createcheckbutton(parent, 30, -parent.collapse - 5 - 30*parent.option_num, str, "Icons", false, v)
 	bu.apply = function() G["Icons"][v].update_onedit("enable") end
-	
-	bu:SetScript("OnEnter", function(self) 
+
+	bu:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT",  -20, 10)
 		GameTooltip:SetSpellByID(spell_id)
 		if bu.tip then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(G.addon_c..bu.tip.."|r")
 		end
-		GameTooltip:Show() 
+		GameTooltip:Show()
 	end)
 	bu:SetScript("OnLeave", function(self)
 		GameTooltip:Hide()
 	end)
-	
+
 	parent.option_num = parent.option_num + 1
 	bu:Hide()
 	table.insert(parent.options, bu)
-	
+
 	return bu
 end
 
@@ -473,29 +474,29 @@ T.Create_HLOnRaid_Options = function(parent, v, t)
 		str = string.format(L["显示高亮图标光环"], T.GetIconLink(spellID))
 	end
 	local bu = createcheckbutton(parent, 30, -parent.collapse - 5 - 30*parent.option_num, str, t, false, v)
-	
-	bu:SetScript("OnEnter", function(self) 
+
+	bu:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT",  -20, 10)
 		GameTooltip:SetSpellByID(spellID)
 		if bu.tip then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(G.addon_c..bu.tip.."|r")
 		end
-		GameTooltip:Show() 
+		GameTooltip:Show()
 	end)
 	bu:SetScript("OnLeave", function(self)
 		GameTooltip:Hide()
 	end)
-	
+
 	parent.option_num = parent.option_num + 1
 	bu:Hide()
 	table.insert(parent.options, bu)
 end
 
 T.Create_PlateAlert_Options = function(parent, v, t)
-	
+
 	local str
-	
+
 	if t == "PlateSpells" then
 		str = string.format(L["显示姓名板图标施法"], T.GetIconLink(v))
 	elseif t == "PlateAuras" then
@@ -503,24 +504,24 @@ T.Create_PlateAlert_Options = function(parent, v, t)
 	else
 		str = L["显示姓名板能量图标"]
 	end
-	
+
 	local bu = createcheckbutton(parent, 30, -parent.collapse - 5 - 30*parent.option_num, str, t, false, v)
-	
+
 	if t == "PlateSpells" or t == "PlateAuras" then
-		bu:SetScript("OnEnter", function(self) 
+		bu:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT",  -20, 10)
 			GameTooltip:SetSpellByID(v)
 			if bu.tip then
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine(G.addon_c..bu.tip.."|r")
 			end
-			GameTooltip:Show() 
+			GameTooltip:Show()
 		end)
 		bu:SetScript("OnLeave", function(self)
 			GameTooltip:Hide()
 		end)
 	end
-	
+
 	parent.option_num = parent.option_num + 1
 	bu:Hide()
 	table.insert(parent.options, bu)
@@ -535,25 +536,24 @@ T.Create_ChatMsg_Options = function(parent, v, t)
 		str = string.format(L["添加喊话"], T.GetIconLink(tonumber(v)))
 		bu = createcheckbutton(parent, 30, -parent.collapse - 5 - 30*parent.option_num, str, "ChatMsgBossWhispers", false, v)
 	end
-	
-	bu:SetScript("OnEnter", function(self) 
+
+	bu:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT",  -20, 10)
 		GameTooltip:SetSpellByID(v)
 		if bu.tip then
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine(G.addon_c..bu.tip.."|r")
 		end
-		GameTooltip:Show() 
+		GameTooltip:Show()
 	end)
 	bu:SetScript("OnLeave", function(self)
 		GameTooltip:Hide()
 	end)
-	
+
 	parent.option_num = parent.option_num + 1
 	bu:Hide()
 	table.insert(parent.options, bu)
 end
-
 
 local scanTooltip = CreateFrame("GameTooltip", "NPCNameToolTip", nil, "GameTooltipTemplate") --fake tooltipframe used for reading localized npc names -- by lunaic
 
@@ -572,24 +572,24 @@ T.CreateMobOptions = function(parent, id, options, image_id)
 	T.createborder(mf)
 	mf.option_num = 0
 	mf.options = {}
-	
+
 	if not parent.last_mob then
 		mf:SetPoint("TOP", 0, -10)
 	else
 		mf:SetPoint("TOP", parent.last_mob, "BOTTOM", 0, -5)
 	end
-	
+
 	parent.last_mob = mf
-	
+
 	if image_id then
 		mf.collapse = 55
 	else
 		mf.collapse = 25
 	end
-	
+
 	mf:SetSize(510,	mf.collapse)
-	
-	mf.title = T.createUIPanelButton(mf, nil, 510, mf.collapse, GetNameFromNpcID(id))	
+
+	mf.title = T.createUIPanelButton(mf, nil, 510, mf.collapse, GetNameFromNpcID(id))
 	mf.title:SetPoint("TOP")
 	mf.title:SetScript("OnMouseDown", function()
 		if mf.expand then
@@ -598,7 +598,7 @@ T.CreateMobOptions = function(parent, id, options, image_id)
 			end
 			mf:SetHeight(mf.collapse)
 			mf.expand = false
-		else		
+		else
 			for k, v in pairs(mf.options) do
 				v:Show()
 			end
@@ -606,7 +606,7 @@ T.CreateMobOptions = function(parent, id, options, image_id)
 			mf.expand = true
 		end
 	end)
-		
+
 	if image_id then
 		mf.title.img = mf.title:CreateTexture(nil, "OVERLAY")
 		mf.title.img:SetPoint("BOTTOMLEFT", 0, 0)
@@ -614,7 +614,7 @@ T.CreateMobOptions = function(parent, id, options, image_id)
 		mf.title.img:SetSize(128, 64)
 		mf.title.img:SetTexture(image_id)
 	end
-	
+
 	for Alert_Type, Alerts in T.pairsByKeys(options) do
 		if Alert_Type == "AlertIcon" then
 			for v, args in T.pairsByKeys(Alerts) do
@@ -635,7 +635,7 @@ T.CreateMobOptions = function(parent, id, options, image_id)
 				elseif v_type == "bmsg" then
 					T.CreateBossMsg(mf, v, unpack(args))
 				end
-			end	
+			end
 		elseif Alert_Type == "HLOnRaid" then
 			for v, t in T.pairsByKeys(Alerts) do
 				if SMT_CDB[t][v] == nil then
@@ -658,7 +658,7 @@ T.CreateMobOptions = function(parent, id, options, image_id)
 				end
 			end
 		elseif Alert_Type == "ChatMsg" then
-			for v, t in pairs(Alerts) do				
+			for v, t in pairs(Alerts) do
 				if SMT_CDB[t][v] == nil then
 					SMT_CDB[t][v] = true
 				end
@@ -784,10 +784,10 @@ options.AlertFrame_enable = createcheckbutton(options.sfa, 40, -160, L["启用"]
 options.AlertFrame_enable.apply = function() T.EditAlertFrame("enable") end
 
 local growdirection_group = {
-	{"RIGHT",  L["左"]},	
+	{"RIGHT",  L["左"]},
 	{"LEFT",   L["右"]},
 	{"BOTTOM", L["上"]},
-	{"TOP",    L["下"]},	
+	{"TOP",    L["下"]},
 }
 options.AlertFrame_grow_dir = createradiobuttongroup(options.sfa, 150, -166, L["排列方向"], "AlertFrame", false, "grow_dir", growdirection_group)
 options.AlertFrame_grow_dir.apply = function() T.EditAlertFrame("grow_dir") end
@@ -813,7 +813,7 @@ options.HL_Frame_icon_size = createslider(options.sfa, 60, -410, L["图标大小
 options.HL_Frame_icon_alpha = createslider(options.sfa, 300, -410, L["图标透明度"], "HL_Frame", false, "iconAlpha", 10, 100, 1)
 
 local anchors = {
-	{"CENTER",		 L["中间"]}, 
+	{"CENTER",		 L["中间"]},
 	{"LEFT",		 L["左"]},
 	{"RIGHT",		 L["右"]},
 	{"TOP", 		 L["上"]},
@@ -831,6 +831,12 @@ T.CreateTitle(options.sfa, L["姓名板图标"], -480)
 
 options.PlateAlerts_enable = createcheckbutton(options.sfa, 40, -510, L["启用"], "PlateAlerts", false, "enable")
 options.PlateAlerts_enable.apply = function() T.EditPlateIcons("enable") end
+
+options.PlateAlerts_x = createslider(options.sfa, 480, -590, L["HorizontalDistance"], "PlateAlerts", false, "x", -50, 50, 1)
+options.PlateAlerts_x.apply = function() T.EditPlateIcons("x") end
+
+options.PlateAlerts_cdfsize = createslider(options.sfa, 480, -630, L["CooldownFontSize"], "PlateAlerts", false, "cdfsize", 1, 20, 1)
+options.PlateAlerts_cdfsize.apply = function() T.EditPlateIcons("cooldown_font_size") end
 
 options.PlateAlerts_size = createslider(options.sfa, 60, -550, L["图标大小"], "PlateAlerts", false, "size", 20, 50, 1)
 options.PlateAlerts_size.apply = function() T.EditPlateIcons("icon_size") end
@@ -864,7 +870,6 @@ end
 
 CreateAffixNPOptions("Explosive_np", 13, 40, -580)
 CreateAffixNPOptions("Bolster_np", 7, 240, -580)
-CreateAffixNPOptions("Ghuun_np", 16, 440, -580)
 CreateAffixNPOptions("Sanguine_np", 8, 40, -610)
 CreateAffixNPOptions("Raging_np", 6, 240, -610)
 
@@ -888,35 +893,36 @@ end
 CreateAffixTextOptions("Quaking", 14, 40, -720)
 CreateAffixTextOptions("Explosive", 13, 240, -720)
 
-T.CreateTitle(options.sfa, L["小队减伤CD"], -750)
+local CD_options = T.CreateOptions(L["小队减伤CD"], gui, true)
+gui.CD_options = CD_options
 
-options.CD_Icons_enable = createcheckbutton(options.sfa, 40, -780, L["启用"], "CD_Icons", false, "enable")
-options.CD_Icons_enable.apply = function() T.EditCDBar("show") end
+T.CreateTitle(CD_options.sfa, L["小队减伤CD"], -20)
 
-options.CD_Icons_hideinraid = createcheckbutton(options.sfa, 130, -780, L["在团队中隐藏"], "CD_Icons", false, "hide_in_raid")
-options.CD_Icons_hideinraid.apply = function() T.EditCDBar("show") end
+CD_options.CD_Icons_enable = createcheckbutton(CD_options.sfa, 40, -50, L["启用"], "CD_Icons", false, "enable")
+CD_options.CD_Icons_enable.apply = function() T.EditCDBar("show") end
 
-options.CD_Icons_grow_dir = createradiobuttongroup(options.sfa, 300, -786, L["排列方向"], "CD_Icons", false, "grow_dir", growdirection_group)
-options.CD_Icons_grow_dir.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_hideinraid = createcheckbutton(CD_options.sfa, 130, -50, L["在团队中隐藏"], "CD_Icons", false, "hide_in_raid")
+CD_options.CD_Icons_hideinraid.apply = function() T.EditCDBar("show") end
 
-options.CD_Icons_size = createslider(options.sfa, 60, -820, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
-options.CD_Icons_size.apply = function() T.EditCDBar("size") end
+CD_options.CD_Icons_grow_dir = createradiobuttongroup(CD_options.sfa, 300, -56, L["排列方向"], "CD_Icons", false, "grow_dir", growdirection_group)
+CD_options.CD_Icons_grow_dir.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_space = createslider(options.sfa, 270, -820, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
-options.CD_Icons_space.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_size = createslider(CD_options.sfa, 60, -90, L["图标大小"], "CD_Icons", false, "icon_size", 20, 60, 1)
+CD_options.CD_Icons_size.apply = function() T.EditCDBar("size") end
 
-options.CD_Icons_num = createslider(options.sfa, 480, -820, L["图标数量"], "CD_Icons", false, "icon_num", 1, 6, 1)
-options.CD_Icons_num.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_space = createslider(CD_options.sfa, 270, -90, L["图标间距"], "CD_Icons", false, "icon_space", 0, 10, 1)
+CD_options.CD_Icons_space.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_x = createslider(options.sfa, 60, -860, L["水平位置偏移"], "CD_Icons", false, "x", -20, 20, 1)
-options.CD_Icons_x.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_x = createslider(CD_options.sfa, 60, -130, L["水平位置偏移"], "CD_Icons", false, "x", -20, 20, 1)
+CD_options.CD_Icons_x.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_y = createslider(options.sfa, 270, -860, L["垂直位置偏移"], "CD_Icons", false, "y", -20, 20, 1)
-options.CD_Icons_y.apply = function() T.EditCDBar("pos") end
+CD_options.CD_Icons_y = createslider(CD_options.sfa, 270, -130, L["垂直位置偏移"], "CD_Icons", false, "y", -20, 20, 1)
+CD_options.CD_Icons_y.apply = function() T.EditCDBar("pos") end
 
-options.CD_Icons_alpha = createslider(options.sfa, 480, -860, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
-options.CD_Icons_alpha.apply = function() T.EditCDBar("alpha") end
+CD_options.CD_Icons_alpha = createslider(CD_options.sfa, 480, -130, L["冷却中图标透明度"], "CD_Icons", false, "alpha", 0, 100, 5)
+CD_options.CD_Icons_alpha.apply = function() T.EditCDBar("alpha") end
 
+T.CreateTitle(CD_options.sfa, L["减伤类型"], -170)
 ----------------------------------------------------------
 --------------------[[     CMD     ]]---------------------
 ----------------------------------------------------------

@@ -1,12 +1,12 @@
 ﻿local T, C, L, G = unpack(select(2, ...))
-	
+
 local Character_default_Settings = {
 	FramePoints = {},
-	
+
 	General = {
 		disable_all = false,
 	},
-	
+
 	AlertFrame = {
 		enable = true,
 		icon_size = 70,
@@ -19,77 +19,99 @@ local Character_default_Settings = {
 		["1_aura_no_209858"] = true, -- 死疽
 		["1_aura_no_226512"] = true, -- 血池
 	},
-	
+
 	TextFrame = {
 		short = false,
 		font_size = 30,
 		Quaking = true, -- 震荡
 		Explosive = true, -- 易爆
 	},
-	
+
 	HL_Frame = {
 		enable = true,
 		position = "CENTER",
 		iconSize = 30,
 		iconAlpha = 80,
 	},
-	
+
 	PlateAlerts = {
 		enable = true,
 		fsize = 7,
+		cdfsize = 12,
 		size = 30,
-		y = 30,
+		y = 10,
+		x = 40,
 		Explosive_np = true, -- 易爆姓名板图标
 		Bolster_np = true, -- 激励姓名板图标
 		Sanguine_np = true, -- 血池姓名板图标
 		Raging_np = true, -- 暴怒姓名板图标
 		Ghuun_np = true, -- 戈霍恩共生体姓名板图标
 	},
-	
+
 	CD_Icons = {
 		enable = true,
 		icon_size = 40,
 		icon_space = 4,
-		icon_num = 4,
 		grow_dir = "RIGHT",
 		hide_in_raid = true,
 		x = 5,
 		y = 0,
 		alpha = 20,
 	},
-	
+
+	typeToTrack = {
+		INTERRUPT = true,
+		HARDCC = true,
+		SOFTCC = true,
+		STHARDCC = true,
+		STSOFTCC = true,
+		DISPEL = true,
+		DEFMDISPEL = true,
+		EXTERNAL = true,
+		HEALING = true,
+		UTILITY = true,
+		PERSONAL = true,
+		IMMUNITY = true,
+		DAMAGE = true,
+		TANK = true,
+	},
+
+	spellToTrack = {
+
+	},
+
 	Icons = {
 
 	},
-	
+
 	HL_Auras = {
-	
+
 	},
-	
+
 	HL_Cast = {
-	
+
 	},
-	
+
 	HL_Casting = {
-	
+
 	},
-	
+
 	PlateSpells = {
 
 	},
-	
+
 	PlateAuras = {
-		
+
 	},
-	
+
 	PlatePower = {
 
 	},
-	
+
 	ChatMsgAuras = {
 
 	},
-	
+
 	ChatMsgBossWhispers = {
 
 	},
@@ -152,10 +174,10 @@ eventframe:RegisterEvent("ADDON_LOADED")
 eventframe:SetScript("OnEvent", function(self, event, ...)
 	local addon = ...
 	if addon ~= "SMT" then return end
-	
+
 	T.LoadVariables()
 	T.LoadAccountVariables()
-	
+
 	for id, data in pairs(G.Dungeons) do
 		local option_page = T.CreateOptions(EJ_GetInstanceInfo(id), G.gui, true)
 		if data then
@@ -170,10 +192,10 @@ eventframe:SetScript("OnEvent", function(self, event, ...)
 						G.Npc[CreatureID][spell] = cd
 					end
 				end
-			end			
+			end
 		end
 	end
-	
+
 	local options = T.CreateOptions(L["制作"], G.gui)
 
 	local info = T.createtext(options, "OVERLAY", 25, "OUTLINE", "CENTER")
@@ -202,6 +224,6 @@ eventframe:SetScript("OnEvent", function(self, event, ...)
 
 	model:SetScript("OnEnter", function(self) self:SetFacing(0) end)
 	model:SetScript("OnLeave", function(self) self:SetFacing(1) end)
-		
+
 	model:EnableMouse(true)
 end)
